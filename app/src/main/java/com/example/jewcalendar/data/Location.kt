@@ -1,4 +1,7 @@
 package com.example.jewcalendar.data
 
-class Location {
-}
+data class UserLocation(
+    val latitude: Double,
+    val longitude: Double,
+    val cityName: String = ""
+)

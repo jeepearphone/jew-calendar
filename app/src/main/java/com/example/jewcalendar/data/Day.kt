@@ -1,4 +1,6 @@
 package com.example.jewcalendar.data
 
-class Day {
-}
+data class Day(
+    val hebrewDay: HebrewDay,
+    val selectedEventId: String? = null
+)
