@@ -7,7 +7,7 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.util.*
 
-object CalendarRepository {
+object Calendar {
     enum class HebrewYearType {
         DEFICIENT_COMMON,
         REGULAR_COMMON,
@@ -17,7 +17,8 @@ object CalendarRepository {
         COMPLETE_LEAP
     }
 
-
+    fun getMonthDays(month: YearMonth): List<HebrewDay> =
+        (1..month.lengthOfMonth()).map { getHebrewDay(month.atDay(it)) }
 
     fun getHebrewDay(date: LocalDate): HebrewDay {
         val jc = jewishCalendarFromLocalDate(date)
@@ -34,7 +35,7 @@ object CalendarRepository {
             isToday = false
         )
     }
-    private fun jewishCalendarFromLocalDate(date: LocalDate): JewishCalendar {
+    fun jewishCalendarFromLocalDate(date: LocalDate): JewishCalendar {
         val gc = GregorianCalendar(date.year, date.monthValue - 1, date.dayOfMonth)
         return JewishCalendar(gc)
     }
