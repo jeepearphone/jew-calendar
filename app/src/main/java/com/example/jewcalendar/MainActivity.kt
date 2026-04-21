@@ -63,7 +63,7 @@ fun MainScaffold() {
             ModalDrawerSheet(modifier = Modifier.width(280.dp)) {
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    "לוּחַ  Луах",
+                    "Луах",
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

@@ -28,9 +28,9 @@ object Calendar {
             hebrewDayOfMonth = jc.jewishDayOfMonth,
             hebrewMonthName = getHebrewMonthName(jc.jewishMonth, isHebrewLeapYear(jc.jewishYear)),
             hebrewYear = jc.jewishYear,
-            sunsetTime = TODO(),
+            sunsetTime = null, //okak
             events = getJewishEventsForDay(jc, date),
-            userEvents = TODO(),
+            userEvents = null, //okak
             isShabbat = false,
             isToday = false
         )
