@@ -1,5 +1,6 @@
 package com.example.jewcalendar.data
 
+import com.example.jewcalendar.data.EventsProvider.getJewishEventsForDay
 import com.kosherjava.zmanim.hebrewcalendar.JewishCalendar
 import java.time.LocalDate
 import java.time.LocalTime
@@ -22,14 +23,13 @@ object Calendar {
 
     fun getHebrewDay(date: LocalDate): HebrewDay {
         val jc = jewishCalendarFromLocalDate(date)
-
         return HebrewDay(
             gregorianDate = date,
             hebrewDayOfMonth = jc.jewishDayOfMonth,
             hebrewMonthName = getHebrewMonthName(jc.jewishMonth, isHebrewLeapYear(jc.jewishYear)),
             hebrewYear = jc.jewishYear,
             sunsetTime = TODO(),
-            events = TODO(),
+            events = getJewishEventsForDay(jc, date),
             userEvents = TODO(),
             isShabbat = false,
             isToday = false
