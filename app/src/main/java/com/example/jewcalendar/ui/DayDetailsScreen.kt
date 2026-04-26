@@ -22,7 +22,7 @@ fun DayDetailsScreen(eventId: String, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(event?.nameRu ?: "Праздник") },
+                title = { Text(event?.nameRu ?: "Событие") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Назад")
@@ -33,7 +33,7 @@ fun DayDetailsScreen(eventId: String, onBack: () -> Unit) {
     ) { pad ->
         if (event == null) {
             Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.Center) {
-                Text("Праздник не найден")
+                Text("Событие не найдено")
             }
             return@Scaffold
         }
@@ -52,14 +52,14 @@ fun DayDetailsScreen(eventId: String, onBack: () -> Unit) {
             Spacer(Modifier.height(8.dp))
             if (event.durationDays > 1) {
                 Spacer(Modifier.height(4.dp))
-                Text("${event.durationDays} дней",
+                Text("Длительность - ${event.durationDays} дней",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Spacer(Modifier.height(16.dp))
             HorizontalDivider()
             Spacer(Modifier.height(16.dp))
-            Text("О празднике", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text("О дне", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
             Text(event.fullDesc, style = MaterialTheme.typography.bodyMedium)
             if (event.prohibitions.isNotEmpty()) {

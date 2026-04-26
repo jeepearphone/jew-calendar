@@ -76,7 +76,7 @@ fun SettingsScreen(onHolidayClick: (String) -> Unit = {}) {
         }
         item {
             Spacer(Modifier.height(8.dp))
-            Text("Праздники", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text("Особые даты", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         }
         items(allHolidays) { h ->
             Card(modifier = Modifier.fillMaxWidth(), onClick = { onHolidayClick(h.id) }) {

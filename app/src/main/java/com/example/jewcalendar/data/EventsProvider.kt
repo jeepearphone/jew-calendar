@@ -12,13 +12,22 @@ import java.time.LocalDate
 object EventsProvider {
 
 
-    fun getById(id: String) = HOLIDAYS_BY_HEBREW_DAY.values.firstOrNull { it.id == id }
+    fun getById(id: String) : JewishEventsInfo?{
+        when (id) {
+            "hanukah" -> return Hanukah
+            "purim" -> return Purim
+            "yom_hazikaron" -> return yomHaZikaron
+            "yom_haatzmaut" -> return yomHaAtzmaut
+        }
+        return HOLIDAYS_BY_HEBREW_DAY.values.firstOrNull { it.id == id }
+    }
     fun getAll() = HOLIDAYS_BY_HEBREW_DAY.values.toList()
     fun getJewishEventsForDay(jc: JewishCalendar, date: LocalDate): JewishEventsInfo? {
         val hebrewDate = jc.jewishDayOfMonth
         val hebrewMonth = Calendar.getHebrewMonthName(jc.jewishMonth, Calendar.isHebrewLeapYear(jc.jewishYear))
         if (isHanukkah(jc, hebrewDate, hebrewMonth)) return Hanukah
         if (isPurim(jc, hebrewDate, hebrewMonth)) return Purim
+        isIsraeliIndependenceDays(jc, hebrewDate, hebrewMonth)?.let { return it }
         return HOLIDAYS_BY_HEBREW_DAY[Date(hebrewDate, hebrewMonth)]
     }
 
@@ -80,7 +89,7 @@ object EventsProvider {
         }
         return false
     }
-    private fun getIsraeliIndependenceDays(
+    private fun isIsraeliIndependenceDays(
         jc: JewishCalendar,
         day: Int,
         month: String
@@ -216,7 +225,7 @@ object EventsProvider {
             durationDays = 1
         ))
 
-        put(Date(20, "Сиван"), JewishEventsInfo(
+        put(Date(26, "Ияр"), JewishEventsInfo(
             id = "yom_shichrur",
             type = EventType.HISTORICAL,
             nameRu = "Йом Шихрур ве-Ацала",

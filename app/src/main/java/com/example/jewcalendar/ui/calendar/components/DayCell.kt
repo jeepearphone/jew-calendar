@@ -49,12 +49,12 @@ fun DayCell(day: HebrewDay, onClick: () -> Unit) {
         ) {
             Text(
                 text  = day.gregorianDate.dayOfMonth.toString(),
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
             )
             Text(
                 text = day.hebrewDayOfMonth.toString(),
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 lineHeight = 8.sp,
                 color = Color.Black,
                 maxLines = 1,
@@ -72,10 +72,10 @@ fun DayCell(day: HebrewDay, onClick: () -> Unit) {
                         EventType.HISTORICAL -> Color(0xFF4CAF50)
                         else -> Color.Transparent
                     }
-                    Box(Modifier.size(5.dp).clip(CircleShape).background(dotColor))
+                    Box(Modifier.size(6.dp).clip(CircleShape).background(dotColor))
                 }
                 if (hasUserEvent != null) {
-                    Box(Modifier.size(5.dp).clip(CircleShape).background(Color(0xFF9C27B0)))
+                    Box(Modifier.size(6.dp).clip(CircleShape).background(Color(0xFF9C27B0)))
                 }
             }
         }

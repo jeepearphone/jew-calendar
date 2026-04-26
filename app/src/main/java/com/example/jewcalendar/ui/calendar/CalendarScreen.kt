@@ -136,14 +136,14 @@ private fun DayBottomSheetContent(
             fontWeight = FontWeight.Bold
         )
         Text(
-            text  = "${day.hebrewMonthName} ${day.hebrewYear}",
+            text  = "${day.hebrewDayOfMonth} ${day.hebrewMonthName} ${day.hebrewYear}",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary
         )
 
         Spacer(Modifier.height(16.dp))
         HorizontalDivider()
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
         // Закат
 
