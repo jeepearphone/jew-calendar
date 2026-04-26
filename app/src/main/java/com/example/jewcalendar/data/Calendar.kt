@@ -136,7 +136,7 @@ object Calendar {
     }
     private fun lastMonthOfHebrewYear(year: Int): Int =
         if (isHebrewLeapYear(year)) 13 else 12
-    private fun daysInHebrewMonth(year: Int, month: Int): Int {
+    fun daysInHebrewMonth(year: Int, month: Int): Int {
         return when (month) {
             1 -> 30
             2 -> 29

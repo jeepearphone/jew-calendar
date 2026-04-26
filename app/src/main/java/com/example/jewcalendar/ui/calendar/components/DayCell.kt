@@ -49,11 +49,12 @@ fun DayCell(day: HebrewDay, onClick: () -> Unit) {
         ) {
             Text(
                 text  = day.gregorianDate.dayOfMonth.toString(),
+                fontSize = 14.sp,
                 fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
             )
             Text(
                 text = day.hebrewDayOfMonth.toString(),
-                fontSize = 7.sp,
+                fontSize = 12.sp,
                 lineHeight = 8.sp,
                 color = Color.Black,
                 maxLines = 1,
