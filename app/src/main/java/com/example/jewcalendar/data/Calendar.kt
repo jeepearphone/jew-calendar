@@ -1,7 +1,9 @@
 package com.example.jewcalendar.data
 
 import com.example.jewcalendar.data.EventsProvider.getJewishEventsForDay
+import com.kosherjava.zmanim.ComplexZmanimCalendar
 import com.kosherjava.zmanim.hebrewcalendar.JewishCalendar
+import com.kosherjava.zmanim.util.GeoLocation
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.YearMonth
@@ -21,6 +23,14 @@ object Calendar {
     fun getMonthDays(month: YearMonth): List<HebrewDay> =
         (1..month.lengthOfMonth()).map { getHebrewDay(month.atDay(it)) }
 
+    fun getSunset(lat: Double, lon: Double, date: LocalDate): LocalTime? {
+        val tz  = TimeZone.getDefault()
+        val geo = GeoLocation("pt", lat, lon, 0.0, tz)
+        val czc = ComplexZmanimCalendar(geo)
+        czc.calendar = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()))
+        val sunset = czc.sunset ?: return null
+        return sunset.toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
+    }
     fun getHebrewDay(date: LocalDate): HebrewDay {
         val jc = jewishCalendarFromLocalDate(date)
         return HebrewDay(
