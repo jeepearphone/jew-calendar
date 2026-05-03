@@ -12,7 +12,9 @@ import java.time.YearMonth
 fun MonthGrid(
     days: List<HebrewDay>,
     currentMonth: YearMonth,
-    onDayClick: (HebrewDay) -> Unit
+    onDayClick: (HebrewDay) -> Unit,
+    isHebrewMode: Boolean = false,
+    firstDayOverride: DayOfWeek? = null
 ) {
     val offset = when (currentMonth.atDay(1).dayOfWeek) {
         DayOfWeek.SUNDAY    -> 0
@@ -43,7 +45,11 @@ fun MonthGrid(
                     val day = days.getOrNull(index)
                     Box(Modifier.weight(1f)) {
                         if (day != null) {
-                            DayCell(day = day, onClick = { onDayClick(day) })
+                            DayCell(
+                                day = day,
+                                isHebrewMode = isHebrewMode,
+                                onClick = { onDayClick(day) }
+                            )
                         }
                     }
                 }

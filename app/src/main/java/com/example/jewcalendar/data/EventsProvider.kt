@@ -21,7 +21,11 @@ object EventsProvider {
         }
         return HOLIDAYS_BY_HEBREW_DAY.values.firstOrNull { it.id == id }
     }
-    fun getAll() = HOLIDAYS_BY_HEBREW_DAY.values.toList()
+    fun getAll() : List<JewishEventsInfo> {
+        val events1 = HOLIDAYS_BY_HEBREW_DAY.values.toMutableList()
+        events1 += listOf<JewishEventsInfo>(Hanukah, Purim, yomHaAtzmaut, yomHaZikaron)
+        return events1
+    }
     fun getJewishEventsForDay(jc: JewishCalendar, date: LocalDate): JewishEventsInfo? {
         val hebrewDate = jc.jewishDayOfMonth
         val hebrewMonth = Calendar.getHebrewMonthName(jc.jewishMonth, Calendar.isHebrewLeapYear(jc.jewishYear))

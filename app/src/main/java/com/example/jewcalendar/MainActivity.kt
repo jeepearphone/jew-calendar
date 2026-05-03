@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
 import com.example.jewcalendar.navigation.AppNavigation
@@ -42,7 +43,8 @@ class MainActivity : ComponentActivity() {
         ))
         setContent {
             JewCalendarTheme {
-                MainScaffold()
+                val appViewModel: AppViewModel = viewModel()
+                MainScaffold(appViewModel)
             }
         }
     }
@@ -50,7 +52,9 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScaffold() {
+fun MainScaffold(
+    appViewModel : AppViewModel,
+) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val currentRoute = backStack?.destination?.route
@@ -63,7 +67,7 @@ fun MainScaffold() {
             ModalDrawerSheet(modifier = Modifier.width(280.dp)) {
                 Spacer(Modifier.height(24.dp))
                 Text(
-                    "Луах",
+                    "לוּחַ",
                     modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -128,7 +132,7 @@ fun MainScaffold() {
                 }
             }
         ) { innerPadding ->
-            AppNavigation(navController, innerPadding)
+            AppNavigation(navController, innerPadding, appViewModel)
         }
     }
 }

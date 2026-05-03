@@ -25,7 +25,11 @@ import com.example.jewcalendar.data.UserEvent
 import java.time.LocalDate
 
 @Composable
-fun DayCell(day: HebrewDay, onClick: () -> Unit) {
+fun DayCell(
+    day: HebrewDay,
+    isHebrewMode: Boolean = false,
+    onClick: () -> Unit
+) {
     val isToday  = day.gregorianDate == LocalDate.now()
     val hasJewishEvent: JewishEventsInfo? = day.events
     val hasUserEvent: UserEvent? = day.userEvents
@@ -47,21 +51,40 @@ fun DayCell(day: HebrewDay, onClick: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text  = day.gregorianDate.dayOfMonth.toString(),
-                fontSize = 16.sp,
-                fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-            )
-            Text(
-                text = day.hebrewDayOfMonth.toString(),
-                fontSize = 11.sp,
-                lineHeight = 8.sp,
-                color = Color.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Clip,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (isHebrewMode) {
+                Text(
+                    text = day.hebrewDayOfMonth.toString(),
+                    fontSize = 13.sp,
+                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = day.gregorianDate.dayOfMonth.toString(),
+                    fontSize = 9.sp,
+                    lineHeight = 10.sp,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            } else {
+                Text(
+                    text = day.gregorianDate.dayOfMonth.toString(),
+                    fontSize = 13.sp,
+                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    text = day.hebrewDayOfMonth.toString(),
+                    fontSize = 9.sp,
+                    lineHeight = 10.sp,
+                    color = Color.Black,
+                    maxLines = 1,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             Row(
                 modifier = Modifier.height(6.dp),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)

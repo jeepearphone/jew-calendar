@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.jewcalendar.AppViewModel
 import com.example.jewcalendar.ui.*
 import com.example.jewcalendar.ui.calendar.CalendarScreen
 
@@ -25,7 +26,8 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(
     navController: NavHostController,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    appViewModel: AppViewModel
 ) {
     NavHost(
         navController    = navController,
@@ -34,6 +36,7 @@ fun AppNavigation(
     ) {
         composable(Screen.Calendar.route) {
             CalendarScreen(
+                appViewModel = appViewModel,
                 onDayClick    = {  },
                 onHolidayClick = { id ->
                     navController.navigate(Screen.DayDetails.route(id))
@@ -42,6 +45,7 @@ fun AppNavigation(
         }
         composable(Screen.Settings.route) {
             SettingsScreen(
+                appViewModel = appViewModel,
                 onHolidayClick = { id ->
                     navController.navigate(Screen.DayDetails.route(id))
                 }

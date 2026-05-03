@@ -13,22 +13,60 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.jewcalendar.AppViewModel
+import com.example.jewcalendar.CalendarDisplayMode
 import com.example.jewcalendar.data.EventsProvider
+import com.example.jewcalendar.data.JewishEventsInfo
 import com.example.jewcalendar.data.UserEvent
 import java.time.LocalDate
 
 @Composable
-fun SettingsScreen(onHolidayClick: (String) -> Unit = {}) {
-    var userEvents by remember { mutableStateOf(listOf<UserEvent>()) }
+fun SettingsScreen(
+    appViewModel : AppViewModel,
+    onHolidayClick: (String) -> Unit = {}
+) {
+    val userEvents by appViewModel.userEvents.collectAsState()
+    val calendarMode by appViewModel.calendarMode.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
     var shabbatMode by remember { mutableStateOf(false) }
-    val allHolidays = remember { EventsProvider.getAll() }
+    val allHolidays: List<JewishEventsInfo> = remember { EventsProvider.getAll() }
 
     LazyColumn(
         Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        item {
+            Text("Тип календаря", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Spacer(Modifier.height(4.dp))
+        }
+        item {
+            Card(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(
+                        "Режим отображения месяцев",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = calendarMode == CalendarDisplayMode.HEBREW,
+                            onClick = { appViewModel.setCalendarMode(CalendarDisplayMode.HEBREW) }
+                        )
+                        Text("Еврейский")
+                    }
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(
+                            selected = calendarMode == CalendarDisplayMode.GREGORIAN,
+                            onClick = { appViewModel.setCalendarMode(CalendarDisplayMode.GREGORIAN) }
+                        )
+                        Text("Григорианский")
+                    }
+                }
+            }
+            Spacer(Modifier.height(16.dp))
+        }
         item {
             Text("Режим Шаббата", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(4.dp))
@@ -67,7 +105,9 @@ fun SettingsScreen(onHolidayClick: (String) -> Unit = {}) {
                             Text(ev.date.toString(), style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        IconButton(onClick = { userEvents = userEvents - ev }) {
+                        IconButton(onClick = {
+                            appViewModel.removeUserEvent(ev)
+                        }) {
                             Icon(Icons.Default.Delete, null, tint = MaterialTheme.colorScheme.error)
                         }
                     }
@@ -78,9 +118,11 @@ fun SettingsScreen(onHolidayClick: (String) -> Unit = {}) {
             Spacer(Modifier.height(8.dp))
             Text("Особые даты", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         }
-        items(allHolidays) { h ->
+        items(allHolidays) {
+            h ->
             Card(modifier = Modifier.fillMaxWidth(), onClick = { onHolidayClick(h.id) }) {
-                Row(Modifier.padding(12.dp).fillMaxWidth(),
+                Row(
+                    Modifier.padding(12.dp).fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
                     Column(Modifier.weight(1f)) {
@@ -98,7 +140,7 @@ fun SettingsScreen(onHolidayClick: (String) -> Unit = {}) {
     if (showAddDialog) {
         AddEventDialog(
             onDismiss = { showAddDialog = false },
-            onAdd = { ev -> userEvents = userEvents + ev; showAddDialog = false }
+            onAdd = { ev -> appViewModel.addUserEvent(ev); showAddDialog = false }
         )
     }
 }
@@ -108,6 +150,7 @@ private fun AddEventDialog(onDismiss: () -> Unit, onAdd: (UserEvent) -> Unit) {
     var title by remember { mutableStateOf("") }
     var dateStr by remember { mutableStateOf(LocalDate.now().toString()) }
     var recurring by remember { mutableStateOf(false) }
+    var description by remember { mutableStateOf("") }
     var err by remember { mutableStateOf(false) }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -127,7 +170,14 @@ private fun AddEventDialog(onDismiss: () -> Unit, onAdd: (UserEvent) -> Unit) {
             TextButton(onClick = {
                 val date = runCatching { LocalDate.parse(dateStr) }.getOrNull()
                 if (title.isBlank() || date == null) { err = date == null; return@TextButton }
-                onAdd(UserEvent(title = title, date = date, isRecurringYearly = recurring))
+                onAdd(
+                    UserEvent(
+                        title = title,
+                        description = description,
+                        date = date,
+                        isRecurringYearly = recurring
+                    )
+                )
             }) { Text("Добавить") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Отмена") } }

@@ -10,6 +10,8 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.util.*
 
+
+
 object Calendar {
     enum class HebrewYearType {
         DEFICIENT_COMMON,
@@ -162,5 +164,15 @@ object Calendar {
     private fun isShortKislev(year: Int): Boolean {
         val daysInYear = getDaysInHebrewYear(year)
         return daysInYear == 353 || daysInYear == 383
+    }
+    fun getHebrewMonthDays(hebrewYear: Int, hebrewMonth: Int): List<HebrewDay> {
+        val startJC = com.kosherjava.zmanim.hebrewcalendar.JewishCalendar(hebrewYear, hebrewMonth, 1)
+        val gc = startJC.gregorianCalendar
+        val startDate = LocalDate.of(gc.get(java.util.Calendar.YEAR), gc.get(java.util.Calendar.MONTH) + 1, gc.get(java.util.Calendar.DAY_OF_MONTH))
+
+        val daysInMonth = daysInHebrewMonth(hebrewYear, hebrewMonth)
+        return (0 until daysInMonth).map { offset ->
+            getHebrewDay(startDate.plusDays(offset.toLong()))
+        }
     }
 }
