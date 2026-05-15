@@ -61,12 +61,12 @@ fun CalendarScreen(
     var selectedDay by remember { mutableStateOf<HebrewDay?>(null) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val now = LocalDate.now()
-    val currentTime = LocalTime.now() //  заменить на реальные координаты из LocationProvider
-    val sunsetTime: LocalTime? = remember { null } // будет заполнено через GetSunsetForLocationUseCase
 
-    val effectiveToday: LocalDate = remember(sunsetTime) {
-        if (sunsetTime != null && currentTime.isAfter(sunsetTime)) {
+    val todaySunset by appViewModel.todaySunset.collectAsState()
+    val now = LocalDate.now()
+    val currentTime = LocalTime.now()
+    val effectiveToday: LocalDate = remember(todaySunset, currentTime) {
+        if (todaySunset != null && currentTime.isAfter(todaySunset)) {
             now.plusDays(1)
         } else {
             now
@@ -88,6 +88,22 @@ fun CalendarScreen(
                 }
             }
             day.copy(isToday = day.gregorianDate == effectiveToday, userEvents = userEvent)
+        }
+        days = rawDays.map { day ->
+            val userEvent = userEvents.firstOrNull { ev ->
+                if (ev.isRecurringYearly) {
+                    ev.date.dayOfMonth == day.gregorianDate.dayOfMonth &&
+                            ev.date.monthValue == day.gregorianDate.monthValue
+                } else {
+                    ev.date == day.gregorianDate
+                }
+            }
+            val sunsetForDay = appViewModel.getSunsetForDate(day.gregorianDate)
+            day.copy(
+                isToday = day.gregorianDate == effectiveToday,
+                userEvents = userEvent,
+                sunsetTime = sunsetForDay
+            )
         }
     }
     val titleMain: String

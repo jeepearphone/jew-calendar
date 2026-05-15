@@ -14,9 +14,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
+import com.example.jewcalendar.data.LocationProvider
 import com.example.jewcalendar.navigation.AppNavigation
 import com.example.jewcalendar.navigation.Screen
 import com.example.jewcalendar.ui.theme.JewCalendarTheme
@@ -30,26 +33,41 @@ val NAV_ITEMS = listOf(
 )
 
 class MainActivity : ComponentActivity() {
+    private lateinit var appViewModel: AppViewModel
 
-    private val permLauncher = registerForActivityResult(
+    private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
-    ) {  }
-
+    ) { results ->
+        val granted = results[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                results[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (granted) fetchLocation()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permLauncher.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.POST_NOTIFICATIONS
-        ))
+        appViewModel = ViewModelProvider(this)[AppViewModel::class.java]
+        permissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        )
+        fetchLocation()
         setContent {
             JewCalendarTheme {
-                val appViewModel: AppViewModel = viewModel()
                 MainScaffold(appViewModel)
             }
         }
     }
+    private fun fetchLocation() {
+        lifecycleScope.launch {
+            val location = LocationProvider.getCurrentLocation(this@MainActivity)
+            if (location != null) {
+                appViewModel.onLocationReceived(location.latitude, location.longitude)
+            }
+        }
+    }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(

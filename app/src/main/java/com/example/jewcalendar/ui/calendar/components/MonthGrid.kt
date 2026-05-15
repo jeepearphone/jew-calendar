@@ -16,7 +16,8 @@ fun MonthGrid(
     isHebrewMode: Boolean = false,
     firstDayOverride: DayOfWeek? = null
 ) {
-    val offset = when (currentMonth.atDay(1).dayOfWeek) {
+    val firstDay = firstDayOverride ?: currentMonth.atDay(1).dayOfWeek
+    val offset = when (firstDay) {
         DayOfWeek.SUNDAY    -> 0
         DayOfWeek.MONDAY    -> 1
         DayOfWeek.TUESDAY   -> 2
