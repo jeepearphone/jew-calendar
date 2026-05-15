@@ -41,7 +41,8 @@ object Calendar {
             hebrewMonthName = getHebrewMonthName(jc.jewishMonth, isHebrewLeapYear(jc.jewishYear)),
             hebrewYear = jc.jewishYear,
             sunsetTime = null, //okak
-            events = getJewishEventsForDay(jc, date),
+            events = EventsProvider.getJewishEventsForDay(jc, date)
+                ?: EventsProvider.getGregorianEventForDay(date),
             userEvents = null, //okak
             isShabbat = false,
             isToday = false

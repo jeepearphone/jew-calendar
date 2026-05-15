@@ -67,10 +67,12 @@ fun SettingsScreen(
             }
             Spacer(Modifier.height(16.dp))
         }
+            /*
         item {
             Text("Режим Шаббата", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(Modifier.height(4.dp))
         }
+
         item {
             Card(Modifier.fillMaxWidth()) {
                 Row(
@@ -83,6 +85,9 @@ fun SettingsScreen(
             }
             Spacer(Modifier.height(16.dp))
         }
+
+             */
+        /*
         item {
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween) {
@@ -114,6 +119,8 @@ fun SettingsScreen(
                 }
             }
         }
+
+         */
         item {
             Spacer(Modifier.height(8.dp))
             Text("Особые даты", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)

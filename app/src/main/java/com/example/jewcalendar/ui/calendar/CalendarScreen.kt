@@ -62,17 +62,14 @@ fun CalendarScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
 
-    val todaySunset by appViewModel.todaySunset.collectAsState()
-    val now = LocalDate.now()
-    val currentTime = LocalTime.now()
-    val effectiveToday: LocalDate = remember(todaySunset, currentTime) {
-        if (todaySunset != null && currentTime.isAfter(todaySunset)) {
-            now.plusDays(1)
-        } else {
-            now
-        }
-    }
-    LaunchedEffect(currentGregorianMonth, currentHebrewMonthKey, calendarMode, userEvents) {
+    val isAfterSunset by appViewModel.isAfterSunset.collectAsState()
+    val effectiveToday = if (isAfterSunset) LocalDate.now().plusDays(1) else LocalDate.now()
+    val sunsetVersion by appViewModel.sunsetVersion.collectAsState()
+
+
+    LaunchedEffect(currentGregorianMonth, currentHebrewMonthKey, calendarMode, userEvents, sunsetVersion) {
+        android.util.Log.d("CALENDAR_DEBUG", "LaunchedEffect triggered, isAfterSunset=$isAfterSunset, effectiveToday=$effectiveToday")
+
         val rawDays = if (calendarMode == CalendarDisplayMode.GREGORIAN) {
             Calendar.getMonthDays(currentGregorianMonth)
         } else {
@@ -87,23 +84,17 @@ fun CalendarScreen(
                     ev.date == day.gregorianDate
                 }
             }
-            day.copy(isToday = day.gregorianDate == effectiveToday, userEvents = userEvent)
-        }
-        days = rawDays.map { day ->
-            val userEvent = userEvents.firstOrNull { ev ->
-                if (ev.isRecurringYearly) {
-                    ev.date.dayOfMonth == day.gregorianDate.dayOfMonth &&
-                            ev.date.monthValue == day.gregorianDate.monthValue
-                } else {
-                    ev.date == day.gregorianDate
-                }
-            }
+
             val sunsetForDay = appViewModel.getSunsetForDate(day.gregorianDate)
+                ?.let{LocalTime.of(it.hour, it.minute)}
             day.copy(
                 isToday = day.gregorianDate == effectiveToday,
                 userEvents = userEvent,
                 sunsetTime = sunsetForDay
             )
+        }
+        days.forEach { d ->
+            if (d.isToday) android.util.Log.d("CALENDAR_DEBUG", "isToday=true for ${d.gregorianDate}, effectiveToday=$effectiveToday")
         }
     }
     val titleMain: String
