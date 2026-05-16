@@ -25,14 +25,6 @@ object Calendar {
     fun getMonthDays(month: YearMonth): List<HebrewDay> =
         (1..month.lengthOfMonth()).map { getHebrewDay(month.atDay(it)) }
 
-    fun getSunset(lat: Double, lon: Double, date: LocalDate): LocalTime? {
-        val tz  = TimeZone.getDefault()
-        val geo = GeoLocation("pt", lat, lon, 0.0, tz)
-        val czc = ComplexZmanimCalendar(geo)
-        czc.calendar = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()))
-        val sunset = czc.sunset ?: return null
-        return sunset.toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
-    }
     fun getHebrewDay(date: LocalDate): HebrewDay {
         val jc = jewishCalendarFromLocalDate(date)
         return HebrewDay(
@@ -176,4 +168,37 @@ object Calendar {
             getHebrewDay(startDate.plusDays(offset.toLong()))
         }
     }
+    fun getSunsetDate(lat: Double, lon: Double, date: LocalDate): java.util.Date? {
+        val zone = ZoneId.systemDefault()
+        val tz = TimeZone.getDefault()
+
+        val geo = GeoLocation("pt", lat, lon, 0.0, tz)
+        val czc = ComplexZmanimCalendar(geo)
+
+        czc.calendar = GregorianCalendar.from(date.atStartOfDay(zone))
+
+        return czc.sunset
+    }
+
+    fun getSunset(lat: Double, lon: Double, date: LocalDate): LocalTime? {
+        val zone = ZoneId.systemDefault()
+
+        return getSunsetDate(lat, lon, date)
+            ?.toInstant()
+            ?.atZone(zone)
+            ?.toLocalTime()
+            ?.withSecond(0)
+            ?.withNano(0)
+    }
+    /*
+    fun getSunset(lat: Double, lon: Double, date: LocalDate): LocalTime? {
+        val tz  = TimeZone.getDefault()
+        val geo = GeoLocation("pt", lat, lon, 0.0, tz)
+        val czc = ComplexZmanimCalendar(geo)
+        czc.calendar = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()))
+        val sunset = czc.sunset ?: return null
+        return sunset.toInstant().atZone(ZoneId.systemDefault()).toLocalTime()
+    }
+
+     */
 }

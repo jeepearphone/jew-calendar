@@ -30,7 +30,7 @@ fun DayCell(
     isHebrewMode: Boolean = false,
     onClick: () -> Unit
 ) {
-    val isToday  = day.gregorianDate == LocalDate.now()
+    val isToday  = day.isToday
     val hasJewishEvent: JewishEventsInfo? = day.events
     val hasUserEvent: UserEvent? = day.userEvents
     val borderMod = if (isToday)

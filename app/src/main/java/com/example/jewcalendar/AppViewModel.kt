@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.Instant
 
 enum class CalendarDisplayMode {
     GREGORIAN,
@@ -67,29 +69,38 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val _effectiveToday = MutableStateFlow(LocalDate.now())
     val effectiveToday: StateFlow<LocalDate> = _effectiveToday.asStateFlow()
     private fun recalculateSunsetAndDay(lat: Double, lon: Double) {
-        val now = LocalDate.now()
-        val currentTime = LocalTime.now()
+        val zone = ZoneId.systemDefault()
+        val today = LocalDate.now(zone)
+        val nowInstant = Instant.now()
 
-        val sunsetToday = Calendar.getSunset(lat, lon, now)
-            ?.let { LocalTime.of(it.hour, it.minute) }
+        val sunsetDate = Calendar.getSunsetDate(lat, lon, today)
 
-        val isAfter = if (sunsetToday != null) {
-            currentTime.isAfter(sunsetToday)
-        } else {
-            false
-        }
+        val sunsetToday = sunsetDate
+            ?.toInstant()
+            ?.atZone(zone)
+            ?.toLocalTime()
+            ?.withSecond(0)
+            ?.withNano(0)
 
+        val isAfter = sunsetDate
+            ?.toInstant()
+            ?.let { sunsetInstant ->
+                !nowInstant.isBefore(sunsetInstant)
+            } ?: false
 
-        android.util.Log.d("SUNSET_DEBUG",
-            "sunsetToday=$sunsetToday, currentTime=$currentTime, isAfter=$isAfter"
+        val effective = if (isAfter) today.plusDays(1) else today
+
+        android.util.Log.d(
+            "SUNSET_DEBUG",
+            "zone=$zone, today=$today, lat=$lat, lon=$lon, " +
+                    "sunsetToday=$sunsetToday, now=${nowInstant.atZone(zone).toLocalTime()}, " +
+                    "isAfter=$isAfter, effectiveToday=$effective"
         )
 
         _todaySunset.value = sunsetToday
         _isAfterSunset.value = isAfter
+        _effectiveToday.value = effective
         _sunsetVersion.value = _sunsetVersion.value + 1
-        _effectiveToday.value =
-            if (isAfter) now.plusDays(1)
-            else now
     }
 
     private fun startSunsetWatcher() {

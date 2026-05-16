@@ -63,12 +63,33 @@ fun CalendarScreen(
 
 
     val isAfterSunset by appViewModel.isAfterSunset.collectAsState()
-    val effectiveToday = if (isAfterSunset) LocalDate.now().plusDays(1) else LocalDate.now()
+    val effectiveToday by appViewModel.effectiveToday.collectAsState()
     val sunsetVersion by appViewModel.sunsetVersion.collectAsState()
 
+    LaunchedEffect(effectiveToday) {
+        currentGregorianMonth = YearMonth.from(effectiveToday)
 
-    LaunchedEffect(currentGregorianMonth, currentHebrewMonthKey, calendarMode, userEvents, sunsetVersion) {
-        android.util.Log.d("CALENDAR_DEBUG", "LaunchedEffect triggered, isAfterSunset=$isAfterSunset, effectiveToday=$effectiveToday")
+        val jc = Calendar.jewishCalendarFromLocalDate(effectiveToday)
+        currentHebrewMonthKey = HebrewMonthKey(
+            hebrewYear = jc.jewishYear,
+            hebrewMonth = jc.jewishMonth,
+            monthName = getHebrewMonthName(
+                jc.jewishMonth,
+                isHebrewLeapYear(jc.jewishYear)
+            )
+        )
+
+        android.util.Log.d(
+            "CALENDAR_DEBUG",
+            "Auto month update: effectiveToday=$effectiveToday, hebrew=${jc.jewishDayOfMonth}.${jc.jewishMonth}.${jc.jewishYear}"
+        )
+    }
+
+    LaunchedEffect(currentGregorianMonth, currentHebrewMonthKey, calendarMode, userEvents, effectiveToday) {
+        android.util.Log.d(
+            "CALENDAR_DEBUG",
+            "LaunchedEffect triggered, isAfterSunset=$isAfterSunset, effectiveToday=$effectiveToday"
+        )
 
         val rawDays = if (calendarMode == CalendarDisplayMode.GREGORIAN) {
             Calendar.getMonthDays(currentGregorianMonth)
