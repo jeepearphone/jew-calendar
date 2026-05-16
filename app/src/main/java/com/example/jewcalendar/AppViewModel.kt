@@ -64,7 +64,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _sunsetVersion = MutableStateFlow(0)
     val sunsetVersion: StateFlow<Int> = _sunsetVersion.asStateFlow()
-
+    private val _effectiveToday = MutableStateFlow(LocalDate.now())
+    val effectiveToday: StateFlow<LocalDate> = _effectiveToday.asStateFlow()
     private fun recalculateSunsetAndDay(lat: Double, lon: Double) {
         val now = LocalDate.now()
         val currentTime = LocalTime.now()
@@ -73,10 +74,11 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             ?.let { LocalTime.of(it.hour, it.minute) }
 
         val isAfter = if (sunsetToday != null) {
-            currentTime.isAfter(sunsetToday) || currentTime.isBefore(LocalTime.of(6, 0))
+            currentTime.isAfter(sunsetToday)
         } else {
             false
         }
+
 
         android.util.Log.d("SUNSET_DEBUG",
             "sunsetToday=$sunsetToday, currentTime=$currentTime, isAfter=$isAfter"
@@ -85,6 +87,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         _todaySunset.value = sunsetToday
         _isAfterSunset.value = isAfter
         _sunsetVersion.value = _sunsetVersion.value + 1
+        _effectiveToday.value =
+            if (isAfter) now.plusDays(1)
+            else now
     }
 
     private fun startSunsetWatcher() {

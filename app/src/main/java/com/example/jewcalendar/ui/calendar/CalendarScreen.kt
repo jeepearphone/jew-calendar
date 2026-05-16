@@ -240,7 +240,7 @@ private fun DayBottomSheetContent(
         if (day.sunsetTime != null) {
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "🌅 Закат: ${day.sunsetTime}",
+                text = "Закат: ${day.sunsetTime}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
