@@ -12,10 +12,12 @@ import androidx.navigation.compose.composable
 import com.example.jewcalendar.AppViewModel
 import com.example.jewcalendar.ui.*
 import com.example.jewcalendar.ui.calendar.CalendarScreen
+import com.example.jewcalendar.ui.kosher.KosherCheckScreen
 
 sealed class Screen(val route: String) {
     object Calendar    : Screen("calendar")
     object Settings    : Screen("settings")
+    object KosherCheck : Screen("kosher_check")
     object DayDetails  : Screen("day_details/{eventId}") {
         fun route(eventId: String) = "day_details/$eventId"
         const val ARG = "eventId"
@@ -50,6 +52,9 @@ fun AppNavigation(
                     navController.navigate(Screen.DayDetails.route(id))
                 }
             )
+        }
+        composable(Screen.KosherCheck.route) {
+            KosherCheckScreen()
         }
         composable(
             route = Screen.DayDetails.route,

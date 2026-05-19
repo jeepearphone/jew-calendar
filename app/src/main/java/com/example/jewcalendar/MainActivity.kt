@@ -29,6 +29,7 @@ data class NavItem(val screen: Screen, val label: String, val icon: ImageVector)
 
 val NAV_ITEMS = listOf(
     NavItem(Screen.Calendar, "Календарь", Icons.Default.DateRange),
+    NavItem(Screen.KosherCheck, "Кошерность", Icons.Default.ShoppingCart),
     NavItem(Screen.Settings, "Настройки",  Icons.Default.Settings)
 )
 
