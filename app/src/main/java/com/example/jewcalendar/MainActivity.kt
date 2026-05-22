@@ -22,6 +22,7 @@ import androidx.navigation.compose.*
 import com.example.jewcalendar.data.LocationProvider
 import com.example.jewcalendar.navigation.AppNavigation
 import com.example.jewcalendar.navigation.Screen
+import com.example.jewcalendar.notifications.NotificationScheduler
 import com.example.jewcalendar.ui.theme.JewCalendarTheme
 import kotlinx.coroutines.launch
 
@@ -65,6 +66,11 @@ class MainActivity : ComponentActivity() {
             val location = LocationProvider.getCurrentLocation(this@MainActivity)
             if (location != null) {
                 appViewModel.onLocationReceived(location.latitude, location.longitude)
+                NotificationScheduler.scheduleAll(
+                    context = this@MainActivity,
+                    lat = location.latitude,
+                    lon = location.longitude
+                )
             }
         }
     }

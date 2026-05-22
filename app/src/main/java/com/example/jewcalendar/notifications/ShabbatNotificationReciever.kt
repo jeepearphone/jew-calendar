@@ -1,3 +1,5 @@
+package com.example.jewcalendar.notifications
+
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.BroadcastReceiver
@@ -31,8 +33,8 @@ class ShabbatNotificationReceiver : BroadcastReceiver() {
                 when (type) {
                     "shabbat_soon" -> "Шаббат скоро"
                     "shabbat_start" -> "Шаббат Шалом! ✡️"
-                    "holiday" -> "Праздник ✡️"
-                    else -> "Еврейский календарь"
+                    "holiday" -> "Особый день"
+                    else -> ""
                 }
             )
             .setContentText(message)
@@ -41,5 +43,9 @@ class ShabbatNotificationReceiver : BroadcastReceiver() {
             .build()
 
         nm.notify(System.currentTimeMillis().toInt(), notification)
+
+        if (type == "shabbat_start" || type == "holiday_start") {
+            NotificationScheduler.rescheduleFromSavedLocation(context)
+        }
     }
 }
